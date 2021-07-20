@@ -198,6 +198,11 @@ class PasteImageToVideoSequenceEditor(Operator):
 
     def execute(self, context):
         current_frame = context.scene.frame_current
+        context = bpy.context
+        scene = context.scene
+        sed = scene.sequence_editor
+        sequences = sed.sequences
+
         img_data = GrabImage()
 
         if img_data == 0:
@@ -212,8 +217,9 @@ class PasteImageToVideoSequenceEditor(Operator):
         for directory in img_dir:
             name = os.path.basename(directory)
             path = os.path.dirname(directory+"\\")
-            image = bpy.ops.sequencer.image_strip_add(fit_method='FIT', set_view_transform=False,
-                directory=path, files=[{"name": name, "name": name}], relative_path=False, show_multiview=False, frame_start=current_frame, frame_end=current_frame+100, channel=1)
+
+            image_strip = sequences.new_image("Clipboard", directory, 1, current_frame, fit_method='FIT')
+            image_strip.frame_final_end = current_frame+50
 
         return {"FINISHED"}
 
